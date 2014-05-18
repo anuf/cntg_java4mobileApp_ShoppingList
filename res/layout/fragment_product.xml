@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/tvName"
+    <EditText
+        android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/product_name"
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/tvQuantity"
+            android:id="@+id/etQuantity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

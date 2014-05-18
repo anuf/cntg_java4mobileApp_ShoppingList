@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="anuf.exemplo.shoppinglist.ShowProductActivity"
+            android:name="anuf.exemplo.shoppinglist.ProductActivity"
             android:label="@string/product_activity" >
         </activity>
     </application>

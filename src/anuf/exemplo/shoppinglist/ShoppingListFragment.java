@@ -27,7 +27,7 @@ public class ShoppingListFragment extends ListFragment {
 			
 			@Override
 			public void onClick(View arg0) {
-				Intent anIntent = new Intent(getActivity(), ShowProductActivity.class);
+				Intent anIntent = new Intent(getActivity(), ProductActivity.class);
 				startActivityForResult(anIntent, PRODUCTO);
 			}
 		});

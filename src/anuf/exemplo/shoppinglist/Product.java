@@ -8,13 +8,13 @@ public class Product implements Serializable {
 	private int ID;
 	private String name;
 	private int quantity;
-	private String units;
+	private String unit;
 	
-	public Product(int ID, String name, int quantity) {
+	public Product(int ID, String name, int quantity,String unit) {
 		this.ID = ID;
 		this.name = name;
 		this.quantity = quantity;
-		this.units = units;
+		this.unit = unit;
 	}
 
 	public int getID() {
@@ -25,8 +25,8 @@ public class Product implements Serializable {
 		return name;
 	}
 
-	public String getUnits() {
-		return units;
+	public String getUnit() {
+		return unit;
 	}
 	
 	public int getQuantity() {
@@ -35,6 +35,6 @@ public class Product implements Serializable {
 	
 	@Override
 	public String toString() {
-		return name + "-  " + quantity + " "+ units;
+		return name + " - " + quantity + " "+ unit;
 	}
 }
