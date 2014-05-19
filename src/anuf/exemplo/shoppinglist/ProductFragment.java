@@ -1,6 +1,5 @@
 package anuf.exemplo.shoppinglist;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.CursorJoiner.Result;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,7 +20,7 @@ import android.widget.Spinner;
 
 public class ProductFragment extends Fragment {
 	// DB
-	DBOpenHelper dboh = new DBOpenHelper(getActivity());
+	DBOpenHelper dboh;
 	SQLiteDatabase db;
 	
 	// Views
@@ -36,15 +34,21 @@ public class ProductFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_product, container,
 				false);
-		spinnerUnits = (Spinner) getActivity().findViewById(R.id.spinnerUnits);		 
-		buttonSave = (Button) getActivity().findViewById(R.id.btnSave);
-		buttonCancel = (Button) getActivity().findViewById(R.id.btnCancel);
+		
 		return rootView;
 	}
 	
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
+		spinnerUnits = (Spinner) getActivity().findViewById(R.id.spinnerUnits);		 
+		buttonSave = (Button) getActivity().findViewById(R.id.btnSave);
+		buttonCancel = (Button) getActivity().findViewById(R.id.btnCancel);
+		etName = (EditText) getActivity().findViewById(R.id.etName);
+		etQuantity = (EditText) getActivity().findViewById(R.id.etQuantity);
+		
 		ArrayAdapter<String> unitsAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, units);
+		
+		
 		spinnerUnits.setAdapter(unitsAdapter);
 		
 		buttonSave.setOnClickListener(new OnClickListener() {
@@ -71,17 +75,21 @@ public class ProductFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 	}
 	 private void saveProduct(Product prod){
+		 dboh = new DBOpenHelper(getActivity());
 		 db = dboh.getWritableDatabase();
 		 db.beginTransaction();
 		 try {
 			ContentValues cv = new ContentValues();
-			cv.put(dboh.COLUMN_NAME, prod.getName());
-			cv.put(dboh.COLUMN_QUANTITY,prod.getQuantity());
-			cv.put(dboh.COLUMN_UNIT,prod.getUnit());
-			Long id = db.insert(dboh.TABLE_PRODUCTS, null, cv);
+			cv.put(DBOpenHelper.COLUMN_NAME, prod.getName());
+			cv.put(DBOpenHelper.COLUMN_QUANTITY,prod.getQuantity());
+			cv.put(DBOpenHelper.COLUMN_UNIT,prod.getUnit());
+			db.insert(DBOpenHelper.TABLE_PRODUCTS, null, cv);
+			db.setTransactionSuccessful();
 			
 		} catch (Exception e) {
 			// TODO: handle exception
+		}finally{
+			db.endTransaction();
 		}
 		 
 	 }
