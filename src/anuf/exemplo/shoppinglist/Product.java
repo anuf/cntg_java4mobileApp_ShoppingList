@@ -35,6 +35,6 @@ public class Product implements Serializable {
 	
 	@Override
 	public String toString() {
-		return name + " - " + quantity + " "+ unit;
+		return ID+ " : "+ name + " - " + quantity + " "+ unit;
 	}
 }
