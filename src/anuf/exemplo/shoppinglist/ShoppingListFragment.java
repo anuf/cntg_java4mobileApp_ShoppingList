@@ -157,6 +157,8 @@ public class ShoppingListFragment extends ListFragment {
 				eliminarElemento(theProduct);
 				cargarLista();
 			}else if(adapter instanceof CursorAdapter){
+				item.getItemId()
+				eliminarElemento();
 				// TODO facer este caso para que a lista se actualice automaticamente
 			};
 				
@@ -178,6 +180,28 @@ public class ShoppingListFragment extends ListFragment {
 			String whereClause = DBOpenHelper.COLUMN_ID + " = ?";
 
 			String[] whereArgs = new String[] { String.valueOf(p.getID()) };
+
+			db.delete(DBOpenHelper.TABLE_PRODUCTS, whereClause, whereArgs);
+			db.setTransactionSuccessful();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			db.endTransaction();
+		}
+
+	}
+	
+	private void eliminarElemento2(Long id) {
+
+		dboh = new DBOpenHelper(getActivity());
+		db = dboh.getWritableDatabase();
+		db.beginTransaction();
+		try {
+
+			String whereClause = DBOpenHelper.COLUMN_ID + " = ?";
+
+			String[] whereArgs = new String[] { String.valueOf(id) };
 
 			db.delete(DBOpenHelper.TABLE_PRODUCTS, whereClause, whereArgs);
 			db.setTransactionSuccessful();
