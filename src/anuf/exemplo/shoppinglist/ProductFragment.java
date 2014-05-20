@@ -111,7 +111,7 @@ public class ProductFragment extends Fragment {
 			db.setTransactionSuccessful();
 
 		} catch (Exception e) {
-			Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG);
+			Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
 		} finally {
 			db.endTransaction();
 		}
