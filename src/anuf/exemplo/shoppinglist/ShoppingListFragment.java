@@ -1,12 +1,7 @@
 package anuf.exemplo.shoppinglist;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.ListFragment;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.Resources.Theme;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,16 +17,16 @@ import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class ShoppingListFragment extends ListFragment {
-	public static int PRODUCTO;
+	public static int ADD;
+	public static int EDIT;
 	private Button btnAdd;
-	private Cursor curResultado;
+
 	private DBOpenHelper dboh;
 	private SQLiteDatabase db;
 
@@ -49,7 +44,7 @@ public class ShoppingListFragment extends ListFragment {
 			public void onClick(View arg0) {
 				Intent anIntent = new Intent(getActivity(),
 						ProductActivity.class);
-				startActivityForResult(anIntent, PRODUCTO);
+				startActivityForResult(anIntent, ADD);
 			}
 		});
 
@@ -79,17 +74,17 @@ public class ShoppingListFragment extends ListFragment {
 		dboh = new DBOpenHelper(getActivity());
 		db = dboh.getReadableDatabase();
 
-		String[] columns = { dboh.COLUMN_ID, dboh.COLUMN_NAME,
-				dboh.COLUMN_QUANTITY, dboh.COLUMN_UNIT };
-		curResultado = db.query(dboh.TABLE_PRODUCTS, columns, null, null, null,
-				null, null);
-		getActivity().startManagingCursor(curResultado);
+		//String[] columns = { dboh.COLUMN_ID, dboh.COLUMN_NAME,dboh.COLUMN_QUANTITY, dboh.COLUMN_UNIT };
+		//curResultado = db.query(dboh.TABLE_PRODUCTS, columns, null, null, null,null, null);
+		//getActivity().startManagingCursor(curResultado);
 
-		String[] from = new String[] { dboh.COLUMN_NAME, dboh.COLUMN_QUANTITY };
+		String[] from = new String[] { DBOpenHelper.COLUMN_NAME, DBOpenHelper.COLUMN_QUANTITY };
 		int[] to = new int[] { android.R.id.text1, android.R.id.text2 };
 
 		// OPTION 1 : use a list adapter with a list of products
+		/*
 		List<Product> products = new ArrayList<Product>();
+		Cursor curResultado = creaCursor();
 		curResultado.moveToFirst();
 		while (!curResultado.isAfterLast()) {
 			Product p = new Product(
@@ -98,17 +93,17 @@ public class ShoppingListFragment extends ListFragment {
 							.getString(2)), curResultado.getString(3));
 			products.add(p);
 			curResultado.moveToNext();
-		}
+		}		
 		ListAdapter lAdapter = new ArrayAdapter<Product>(getActivity(),
 				android.R.layout.simple_list_item_1, products);
-
+		 */
 		// OPTION 2 : use a cursor adapter
 		CursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
-				android.R.layout.two_line_list_item, curResultado, from, to,
+				android.R.layout.two_line_list_item, creaCursor(), from, to,
 				CursorAdapter.FLAG_AUTO_REQUERY);
-
+		
 		// set one of the adapters defined above
-		setListAdapter(lAdapter);
+		setListAdapter(adapter);
 	}
 
 	@Override
@@ -133,33 +128,20 @@ public class ShoppingListFragment extends ListFragment {
 
 		// item.setTitle(menuInfo.position + ":- " +item.getTitle().toString());
 		switch (item.getItemId()) {
-		case R.id.context_create:
-			Toast.makeText(
-					getActivity(),
-					item.getTitle() + " selected at position "
-							+ menuInfo.position, Toast.LENGTH_LONG).show();
-			break;
-		case R.id.context_read:
-			Toast.makeText(
-					getActivity(),
-					item.getTitle() + " selected at position "
-							+ menuInfo.position, Toast.LENGTH_LONG).show();
-			break;
-		case R.id.context_update:
-			Toast.makeText(
-					getActivity(),
-					item.getTitle() + " selected at position "
-							+ menuInfo.position, Toast.LENGTH_LONG).show();
+		
+		case R.id.context_edit:
+			editElement(menuInfo.id);
 			break;
 		case R.id.context_delete:
-			if (adapter instanceof ListAdapter) {
+			if (adapter instanceof ArrayAdapter) {
 				theProduct = (Product) adapter.getItem(menuInfo.position);
 				eliminarElemento(theProduct);
 				cargarLista();
-			}else if(adapter instanceof CursorAdapter){
-				item.getItemId()
-				eliminarElemento();
-				// TODO facer este caso para que a lista se actualice automaticamente
+			}else if(adapter instanceof SimpleCursorAdapter){
+				eliminarElemento2(menuInfo.id);
+				//HOW TO REFRESH THE LIST. notifyDataSetChanged() does not work;				
+				((SimpleCursorAdapter) adapter).changeCursor(creaCursor());
+				// The list should be automatically updated
 			};
 				
 			//Toast.makeText(getActivity(),	item.getTitle() + " selected at position "+ menuInfo.position, Toast.LENGTH_LONG).show();
@@ -192,7 +174,7 @@ public class ShoppingListFragment extends ListFragment {
 
 	}
 	
-	private void eliminarElemento2(Long id) {
+	private void eliminarElemento2(long id) {
 
 		dboh = new DBOpenHelper(getActivity());
 		db = dboh.getWritableDatabase();
@@ -212,6 +194,22 @@ public class ShoppingListFragment extends ListFragment {
 			db.endTransaction();
 		}
 
+	}
+	
+	
+	
+	private Cursor creaCursor(){
+		String[] columns = { DBOpenHelper.COLUMN_ID, DBOpenHelper.COLUMN_NAME, DBOpenHelper.COLUMN_QUANTITY, DBOpenHelper.COLUMN_UNIT };
+		Cursor newCursor = db.query(DBOpenHelper.TABLE_PRODUCTS, columns, null, null, null,
+				null, null);
+		return newCursor;
+	}
+	
+	private void editElement(long id){
+		Intent editIntent = new Intent(getActivity(),
+				ProductActivity.class);
+		editIntent.putExtra("id", String.valueOf(id));
+		startActivityForResult(editIntent, EDIT);
 	}
 
 }

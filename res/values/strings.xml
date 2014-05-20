@@ -11,9 +11,6 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="product_activity">Product Activity</string>
-
-    <string name="context_menu_action_create">Create</string>
-    <string name="context_menu_action_read">Read</string>
-    <string name="context_menu_action_update">Update</string>
+    <string name="context_menu_action_edit">Edit</string>
     <string name="context_menu_action_delete">Delete</string>
 </resources>
